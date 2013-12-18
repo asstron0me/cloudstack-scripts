@@ -1,5 +1,6 @@
 #!/bin/sh
 alias cloudmonkey='cloudmonkey -c /root/.cloudmonkey/confignoc'
+echo "starting securegroups fixxer at `date`"
 for listhypervisors in  `mysql cloud -e "select id,private_ip_address from host where hypervisor_type='KVM' and status='Up';"|grep -v address|awk '{print $1","$2}'`
 do
   HVID=`echo $listhypervisors|cut -d, -f1`
@@ -28,6 +29,7 @@ do
         done
       fi
       echo "i will run ssh root@$HVIP 'ebtables.sh $VMNAME $VMNICMAC $VMNICIP'"
+      ssh root@$HVIP "/opt/cloudstack-scripts/ebtables.sh $VMNAME $VMNICMAC $VMNICIP"
     done
   done
 done
